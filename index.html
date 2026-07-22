@@ -297,9 +297,14 @@ function gasRequest(params) {
     const cbName = '__gas_' + Date.now();
     const qs = Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&');
     const url = GAS_URL + '?' + qs + '&callback=' + cbName;
-    window[cbName] = (data) => { delete window[cbName]; script.remove(); resolve(data); };
+    const timer = setTimeout(() => {
+      delete window[cbName];
+      if (script.parentNode) script.remove();
+      reject(new Error('Timeout: el servidor tardó demasiado. Verifica tu conexión.'));
+    }, 15000);
+    window[cbName] = (data) => { clearTimeout(timer); delete window[cbName]; script.remove(); resolve(data); };
     const script = document.createElement('script');
-    script.onerror = () => { delete window[cbName]; script.remove(); reject(new Error('Network error')); };
+    script.onerror = () => { clearTimeout(timer); delete window[cbName]; script.remove(); reject(new Error('Network error')); };
     script.src = url;
     document.head.appendChild(script);
   });
@@ -486,6 +491,21 @@ async function finishActivity() {
   const btn = document.getElementById('btnFinish');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Registrando...';
   try{await registrarNota(10);}catch(e){console.warn(e);}
+  // Guardar resumen de la actividad en hoja "Actividad 3"
+  try {
+    const resumenClassify = 'Clasifico ' + classifyCount + ' de ' + actionCards.length + ' acciones. Completo ejercicio de las 4Es y el Puente de las 4Es.';
+    console.log('[Act3] Enviando registrarRespuesta:', resumenClassify);
+    const resp = await gasRequest({
+      action: 'registrarRespuesta',
+      cedula: colaborador.cedula,
+      nombre: colaborador.nombre,
+      cargo: colaborador.cargo,
+      actividad: ACTIVIDAD_ID,
+      campo: 'Resumen de participacion',
+      valor: resumenClassify
+    });
+    console.log('[Act3] Respuesta GAS registrarRespuesta:', JSON.stringify(resp));
+  } catch(e){console.warn('[Act3] ERROR al guardar respuesta:', e.message);}
   scormComplete(); // Reportar completitud al LMS (SCORM 1.2 — Buk)
   document.getElementById('ex3').classList.add('hidden');
   const cs=document.getElementById('completionScreen');
