@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Actividad 3 – El Puente de las 4E's | ABC Experiencia en Vía</title>
+  <meta name="description" content="Actividad interactiva Capítulo 3: Aprende y aplica las 4E's que transforman un servicio en una experiencia memorable.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:#001E47;--primary-light:#002f6c;--accent:#CDD400;--accent-dark:#9eb300;
+      --white:#ffffff;--glass-bg:rgba(255,255,255,0.72);--glass-bg-strong:rgba(255,255,255,0.88);
+      --glass-border:rgba(255,255,255,0.9);--glass-shadow:0 8px 32px rgba(0,30,71,0.10);
+      --text-dark:#1a2744;--text-mid:#3b4a6b;--text-light:#6b7ba4;
+      --error:#e74c3c;--success:#27ae60;--radius:20px;--radius-sm:12px;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html,body{min-height:100vh;width:100%;font-family:'Inter',sans-serif;background:#ffffff;overflow-x:hidden;color:var(--text-dark);}
+    .blob{position:fixed;border-radius:50%;filter:blur(90px);z-index:0;pointer-events:none;opacity:0.22;}
+    .blob-1{width:420px;height:420px;background:var(--primary);top:-120px;left:-120px;}
+    .blob-2{width:350px;height:350px;background:var(--accent);bottom:-80px;right:-80px;}
+    .blob-3{width:300px;height:300px;background:rgba(0,30,71,0.15);top:50%;left:50%;transform:translate(-50%,-50%);}
+    #app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 80px;max-width:480px;margin:0 auto;}
+
+    .header-strip{width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--glass-bg);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius);padding:12px 18px;margin-bottom:20px;box-shadow:var(--glass-shadow);}
+    .header-tag{background:var(--primary);color:var(--accent);font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:30px;}
+    .header-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--primary);text-align:right;}
+    .progress-wrap{width:100%;margin-bottom:22px;}
+    .progress-label{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--text-light);margin-bottom:6px;letter-spacing:0.5px;}
+    .progress-bar-bg{width:100%;height:6px;background:rgba(0,30,71,0.10);border-radius:10px;overflow:hidden;}
+    .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:10px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);width:0%;}
+    .glass-card{width:100%;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius);box-shadow:var(--glass-shadow);padding:28px 24px;margin-bottom:16px;}
+    .card-subtitle{font-size:13px;color:var(--text-light);margin-bottom:20px;line-height:1.5;}
+    .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 24px;background:var(--primary);color:var(--white);border:none;border-radius:var(--radius-sm);font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:all 0.25s ease;box-shadow:0 4px 20px rgba(0,30,71,0.3);}
+    .btn-primary:hover{background:var(--primary-light);transform:translateY(-2px);}
+    .btn-primary:disabled{background:#aab;cursor:not-allowed;transform:none;opacity:0.7;}
+    .btn-accent{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 24px;background:var(--accent);color:var(--primary);border:none;border-radius:var(--radius-sm);font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:all 0.25s ease;box-shadow:0 4px 20px rgba(205,212,0,0.35);}
+    .btn-accent:hover{background:var(--accent-dark);transform:translateY(-2px);}
+
+    .modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn 0.4s ease;}
+    .modal-box{background:var(--glass-bg-strong);border:1px solid var(--glass-border);border-radius:28px;padding:36px 28px;box-shadow:0 20px 60px rgba(0,30,71,0.18);width:100%;max-width:420px;text-align:center;animation:slideUp 0.4s cubic-bezier(0.4,0,0.2,1);}
+    .modal-icon{font-size:48px;margin-bottom:16px;}
+    .modal-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:22px;color:var(--primary);margin-bottom:8px;}
+    .modal-desc{font-size:14px;color:var(--text-mid);margin-bottom:24px;line-height:1.6;}
+    .modal-input{width:100%;padding:14px 18px;background:rgba(255,255,255,0.9);border:2px solid rgba(0,30,71,0.15);border-radius:var(--radius-sm);font-size:18px;font-weight:600;color:var(--primary);text-align:center;letter-spacing:3px;outline:none;margin-bottom:16px;transition:border 0.2s;}
+    .modal-input:focus{border-color:var(--accent);}
+    .modal-input::placeholder{letter-spacing:0;font-weight:400;color:#aab;font-size:14px;}
+    .modal-error{font-size:13px;color:var(--error);margin-bottom:12px;padding:8px 14px;background:rgba(231,76,60,0.08);border-radius:8px;display:none;}
+    .modal-user-info{background:rgba(0,30,71,0.06);border-radius:var(--radius-sm);padding:16px;margin-bottom:20px;display:none;}
+    .modal-user-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:18px;color:var(--primary);margin-bottom:4px;}
+    .modal-user-cargo{font-size:13px;color:var(--text-light);}
+
+    .step-dots{display:flex;justify-content:center;gap:8px;margin-bottom:20px;}
+    .step-dot{width:8px;height:8px;border-radius:50%;background:rgba(0,30,71,0.15);transition:all 0.3s ease;}
+    .step-dot.active{background:var(--primary);width:20px;border-radius:4px;}
+    .step-dot.done{background:var(--accent);}
+    .section-label{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .section-num{width:28px;height:28px;border-radius:50%;background:var(--primary);color:var(--accent);font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .section-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;color:var(--primary);}
+
+    /* ── Word Selection (Ejercicio 1) ── */
+    .word-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px;}
+    .word-chip{
+      padding:10px 18px;border-radius:30px;border:2px solid rgba(0,30,71,0.15);
+      background:rgba(255,255,255,0.9);font-family:'Outfit',sans-serif;font-weight:600;
+      font-size:14px;color:var(--text-dark);cursor:pointer;transition:all 0.2s;user-select:none;
+    }
+    .word-chip:hover{border-color:var(--primary);background:rgba(0,30,71,0.05);}
+    .word-chip.correct-sel{border-color:var(--success);background:rgba(39,174,96,0.12);color:var(--success);}
+    .word-chip.wrong-sel{border-color:var(--error);background:rgba(231,76,60,0.10);color:var(--error);animation:shake 0.4s;}
+    .word-chip.disabled{pointer-events:none;opacity:0.45;}
+
+    /* Bridge animation */
+    .bridge-container{width:100%;margin-bottom:16px;text-align:center;}
+    .bridge-svg{width:100%;max-width:320px;height:80px;}
+    .bridge-plank{opacity:0;transition:opacity 0.4s ease;}
+    .bridge-plank.visible{opacity:1;}
+    .bridge-user{transition:transform 1s ease;transform:translateX(0);}
+
+    .words-counter{text-align:center;font-size:13px;color:var(--text-light);font-weight:500;margin-bottom:12px;}
+
+    /* ── Match 4E's (Ejercicio 2) ── */
+    .match-row{margin-bottom:18px;}
+    .match-scenario{background:rgba(0,30,71,0.05);border-left:3px solid var(--accent);padding:12px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:13px;color:var(--text-dark);font-weight:500;margin-bottom:10px;line-height:1.4;}
+    .match-options{display:flex;gap:8px;flex-wrap:wrap;}
+    .match-chip{
+      padding:8px 14px;border-radius:20px;border:2px solid rgba(0,30,71,0.15);
+      background:rgba(255,255,255,0.9);font-size:12px;font-weight:600;font-family:'Outfit',sans-serif;
+      color:var(--text-dark);cursor:pointer;transition:all 0.2s;
+    }
+    .match-chip:hover{border-color:var(--primary);}
+    .match-chip.correct{border-color:var(--success);background:rgba(39,174,96,0.12);color:var(--success);}
+    .match-chip.wrong{border-color:var(--error);background:rgba(231,76,60,0.08);color:var(--error);animation:shake 0.4s;}
+    .match-chip.disabled{pointer-events:none;opacity:0.5;}
+    .match-feedback{font-size:12px;margin-top:6px;padding:6px 10px;border-radius:8px;display:none;}
+    .match-feedback.ok{background:rgba(39,174,96,0.08);color:var(--success);display:block;}
+    .match-feedback.bad{background:rgba(231,76,60,0.06);color:var(--error);display:block;}
+
+    /* ── Classify Servicio vs Experiencia (Ejercicio 3) ── */
+    .classify-columns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+    .classify-col{border-radius:var(--radius-sm);padding:14px 12px;min-height:140px;}
+    .classify-col-servicio{background:rgba(0,30,71,0.06);border:2px dashed rgba(0,30,71,0.2);}
+    .classify-col-exp{background:rgba(205,212,0,0.08);border:2px dashed rgba(158,179,0,0.4);}
+    .classify-col-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:12px;text-align:center;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;}
+    .classify-col-servicio .classify-col-title{color:var(--primary);}
+    .classify-col-exp .classify-col-title{color:var(--accent-dark);}
+    .classify-dropped{font-size:12px;padding:6px 10px;border-radius:8px;margin-bottom:6px;background:rgba(255,255,255,0.85);text-align:center;}
+    .action-cards-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;}
+    .action-card{
+      padding:10px 14px;border-radius:var(--radius-sm);border:2px solid rgba(0,30,71,0.15);
+      background:rgba(255,255,255,0.9);font-size:12px;font-weight:500;color:var(--text-dark);
+      cursor:pointer;transition:all 0.2s;text-align:center;line-height:1.4;
+    }
+    .action-card:hover{border-color:var(--primary);transform:scale(1.02);}
+    .action-card.placed{opacity:0.3;pointer-events:none;}
+
+    /* Completion */
+    .completion-screen{width:100%;text-align:center;display:none;animation:fadeIn 0.6s ease;}
+    .completion-screen.show{display:block;}
+    .completion-emoji{font-size:64px;margin-bottom:16px;animation:bounceIn 0.6s;}
+    .completion-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:24px;color:var(--primary);margin-bottom:12px;}
+    .completion-msg{font-size:15px;color:var(--text-mid);line-height:1.7;background:var(--glass-bg-strong);border:1px solid var(--glass-border);border-radius:var(--radius);padding:20px 22px;margin-bottom:20px;font-style:italic;}
+    .completion-badge{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:var(--accent);padding:10px 20px;border-radius:30px;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:24px;}
+
+    .spinner{width:22px;height:22px;border:3px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;}
+    .hidden{display:none!important;}
+    /* ── Botón Volver a Buk ── */
+    .btn-buk{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 24px;background:linear-gradient(135deg,#27ae60,#1e8449);color:#ffffff;border:none;border-radius:var(--radius-sm);font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;transition:all 0.25s ease;box-shadow:0 4px 20px rgba(39,174,96,0.35);margin-top:12px;}
+    .btn-buk:hover{background:linear-gradient(135deg,#1e8449,#196f3d);transform:translateY(-2px);box-shadow:0 8px 28px rgba(39,174,96,0.45);}
+    .btn-buk:active{transform:translateY(0);}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes bounceIn{0%{transform:scale(0.3)}50%{transform:scale(1.1)}75%{transform:scale(0.9)}100%{transform:scale(1)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+    @keyframes bridgeUser{from{transform:translateX(0)}to{transform:translateX(240px)}}
+  </style>
+  <script>
+    /* ============================================================
+       SCORM 1.2 API Wrapper — ABC Experiencia en Vía
+       Falla silenciosamente si no hay LMS (modo standalone/local)
+    ============================================================ */
+    (function(){
+      var _api=null;
+      function _find(w){var t=0;while(!w.API&&w.parent&&w.parent!==w&&t<10){w=w.parent;t++;}return w.API||null;}
+      window.scormInit=function(){_api=_find(window);if(_api){try{_api.LMSInitialize("");_api.LMSSetValue("cmi.core.lesson_status","incomplete");_api.LMSCommit("");}catch(e){console.warn("SCORM init:",e);}}};
+      window.scormComplete=function(){if(_api){try{_api.LMSSetValue("cmi.core.lesson_status","passed");_api.LMSSetValue("cmi.core.score.raw","100");_api.LMSSetValue("cmi.core.score.min","0");_api.LMSSetValue("cmi.core.score.max","100");_api.LMSCommit("");_api.LMSFinish("");}catch(e){console.warn("SCORM complete:",e);}}};
+      window.addEventListener('load',window.scormInit);
+      window.addEventListener('beforeunload',function(){if(_api){try{_api.LMSFinish("");}catch(e){}}});
+    })();
+  </script>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-icon">🌉</div>
+    <div class="modal-title">¡Bienvenido!</div>
+    <p class="modal-desc">Ingresa tu cédula para comenzar la <strong>Actividad 3</strong> — El Puente de las 4E's.</p>
+    <div id="loginStep">
+      <input class="modal-input" type="number" id="cedulaInput" placeholder="Ingresa tu cédula" maxlength="12">
+      <div class="modal-error" id="loginError"></div>
+      <button class="btn-primary" id="btnBuscar">
+        <span id="btnBuscarText">Buscar mi perfil</span>
+        <span class="spinner hidden" id="btnBuscarSpinner"></span>
+      </button>
+    </div>
+    <div class="modal-user-info" id="userInfo">
+      <div class="modal-user-name" id="userName">—</div>
+      <div class="modal-user-cargo" id="userCargo">—</div>
+    </div>
+    <div id="confirmStep" class="hidden">
+      <p class="modal-desc" style="margin-bottom:16px;">¿Eres tú? Confirma para continuar.</p>
+      <button class="btn-accent" id="btnConfirmar">✅ Sí, soy yo — ¡Comenzar!</button>
+      <button class="btn-primary" id="btnNoSoyYo" style="margin-top:10px;background:transparent;color:var(--text-mid);border:1px solid rgba(0,30,71,0.15);box-shadow:none;">No soy yo</button>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="header-strip">
+    <span class="header-tag">📚 Capítulo 3</span>
+    <span class="header-title">Más que un Servicio,<br>Una Experiencia</span>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span id="progressLabel">Ejercicio 1 de 3</span><span id="progressPct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+  </div>
+  <div class="step-dots">
+    <div class="step-dot active" id="dot0"></div>
+    <div class="step-dot" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+  </div>
+
+  <!-- ═══ EJERCICIO 1: Selección de las 4E's ═══ -->
+  <div id="ex1" class="glass-card">
+    <div class="section-label">
+      <div class="section-num">1</div>
+      <div class="section-name">Identifica las 4E's</div>
+    </div>
+    <p class="card-subtitle">Selecciona exactamente las <strong>4 palabras correctas</strong> que forman las 4E's. ¡Cuidado con los distractores!</p>
+
+    <!-- Bridge visual -->
+    <div class="bridge-container">
+      <svg class="bridge-svg" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+        <text x="10" y="50" fill="var(--primary)" font-size="11" font-family="Outfit" font-weight="700">A</text>
+        <text x="293" y="50" fill="var(--accent-dark)" font-size="11" font-family="Outfit" font-weight="700">B</text>
+        <!-- Abyss -->
+        <rect x="30" y="55" width="260" height="30" fill="rgba(0,30,71,0.06)" rx="4"/>
+        <!-- Bridge planks (4 planks) -->
+        <rect class="bridge-plank" id="plank0" x="35" y="50" width="58" height="8" rx="3" fill="var(--primary)" opacity="0.7"/>
+        <rect class="bridge-plank" id="plank1" x="100" y="50" width="58" height="8" rx="3" fill="var(--primary)" opacity="0.7"/>
+        <rect class="bridge-plank" id="plank2" x="165" y="50" width="58" height="8" rx="3" fill="var(--accent)" opacity="0.8"/>
+        <rect class="bridge-plank" id="plank3" x="230" y="50" width="58" height="8" rx="3" fill="var(--accent)" opacity="0.9"/>
+        <!-- User figure -->
+        <text id="bridgeUser" x="8" y="52" font-size="18" class="bridge-user">🚶</text>
+      </svg>
+    </div>
+
+    <div class="words-counter" id="wordsCounter">Seleccionadas: 0 / 4</div>
+    <div class="word-grid" id="wordGrid"></div>
+    <div class="quiz-feedback hidden" id="wordFeedback" style="margin-top:12px;padding:12px 16px;border-radius:12px;font-size:13px;"></div>
+    <button class="btn-primary hidden" id="btnNextEx1" style="margin-top:16px;">Continuar →</button>
+  </div>
+
+  <!-- ═══ EJERCICIO 2: Relaciona la E con la Situación ═══ -->
+  <div id="ex2" class="glass-card hidden">
+    <div class="section-label">
+      <div class="section-num">2</div>
+      <div class="section-name">¿Cuál E aplica aquí?</div>
+    </div>
+    <p class="card-subtitle">Para cada situación, selecciona cuál de las 4E's está siendo aplicada por el colaborador.</p>
+    <div id="matchContainer"></div>
+    <button class="btn-primary hidden" id="btnNextEx2" style="margin-top:16px;">Continuar →</button>
+  </div>
+
+  <!-- ═══ EJERCICIO 3: Servicio vs Experiencia ═══ -->
+  <div id="ex3" class="glass-card hidden">
+    <div class="section-label">
+      <div class="section-num">3</div>
+      <div class="section-name">¿Servicio o Experiencia?</div>
+    </div>
+    <p class="card-subtitle">Toca cada acción y clasifícala. ¿Es solo un servicio básico o es crear una experiencia memorable?</p>
+    <div class="action-cards-pool" id="actionPool"></div>
+    <div class="classify-columns">
+      <div class="classify-col classify-col-servicio" id="colServicio">
+        <div class="classify-col-title">🔧 Servicio Básico</div>
+        <div id="droppedServicio"></div>
+      </div>
+      <div class="classify-col classify-col-exp" id="colExp">
+        <div class="classify-col-title">✨ Experiencia</div>
+        <div id="droppedExp"></div>
+      </div>
+    </div>
+    <div id="classifyFeedback" style="font-size:13px;color:var(--text-light);text-align:center;margin-bottom:12px;"></div>
+    <button class="btn-accent hidden" id="btnFinish" style="margin-top:8px;">🏆 Completar Actividad</button>
+  </div>
+
+  <!-- COMPLETION -->
+  <div id="completionScreen" class="glass-card completion-screen hidden">
+    <div class="completion-emoji">🌉</div>
+    <div class="completion-title">¡Puente Construido!</div>
+    <div class="completion-badge">🏅 Actividad 3 Completada — 10 pts</div>
+    <div class="completion-msg">
+      "No movemos buses, movemos historias.<br>Las 4E's son tu puente hacia el usuario."
+    </div>
+    <div style="background:rgba(0,30,71,0.05);border-radius:var(--radius-sm);padding:16px;margin-bottom:20px;">
+      <p style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px;">Las 4E's que construyen el puente:</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="padding:8px;background:rgba(255,255,255,0.8);border-radius:8px;text-align:center;font-size:12px;font-weight:600;color:var(--primary);">🎯 Expectativa de solución</div>
+        <div style="padding:8px;background:rgba(255,255,255,0.8);border-radius:8px;text-align:center;font-size:12px;font-weight:600;color:var(--primary);">❤️ Empatía</div>
+        <div style="padding:8px;background:rgba(255,255,255,0.8);border-radius:8px;text-align:center;font-size:12px;font-weight:600;color:var(--primary);">⭐ Experiencia</div>
+        <div style="padding:8px;background:rgba(255,255,255,0.8);border-radius:8px;text-align:center;font-size:12px;font-weight:600;color:var(--primary);">💬 Explicación</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--text-light);line-height:1.5;margin-bottom:20px;">✅ Tu calificación ha sido registrada. ¡Avanza al Capítulo 4!</p>
+    <!-- ══ BOTÓN VOLVER A BUK ══ -->
+    <!-- INSTRUCCIÓN: Reemplaza BUK_RETURN_URL con el enlace real de Buk -->
+    <a id="btnVolverBuk" href="BUK_RETURN_URL" class="btn-buk">
+      🔙 Volver a Buk
+    </a>
+  </div>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyX5BlWQFetwLzhPG6j6P7eerodJfGC6xZe4Zc858aH5GeH1WA58NIpKTgdr_QjVw-8/exec';
+const ACTIVIDAD_ID = 'Actividad3';
+let colaborador = {cedula:'',nombre:'',cargo:''};
+
+// ── JSONP helper ──
+function gasRequest(params) {
+  return new Promise((resolve, reject) => {
+    const cbName = '__gas_' + Date.now();
+    const qs = Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&');
+    const url = GAS_URL + '?' + qs + '&callback=' + cbName;
+    window[cbName] = (data) => { delete window[cbName]; script.remove(); resolve(data); };
+    const script = document.createElement('script');
+    script.onerror = () => { delete window[cbName]; script.remove(); reject(new Error('Network error')); };
+    script.src = url;
+    document.head.appendChild(script);
+  });
+}
+let wordCorrectCount = 0;
+let matchAnswered = 0;
+let classifyCount = 0;
+
+const words = [
+  {texto:'Expectativa de solución', correcto:true},
+  {texto:'Empatía', correcto:true},
+  {texto:'Experiencia', correcto:true},
+  {texto:'Explicación', correcto:true},
+  {texto:'Evasión', correcto:false},
+  {texto:'Enojo', correcto:false},
+  {texto:'Excusas', correcto:false}
+];
+
+const matchData = [
+  {situacion:'El colaborador detecta que el usuario parece confundido antes de que hable, y se le acerca primero.', e:'Empatía', opciones:['Expectativa','Empatía','Experiencia','Explicación'], feedback:'✅ ¡Correcto! Ponerse en el lugar del otro antes de que pida ayuda es empatía pura.'},
+  {situacion:'El colaborador le dice al usuario: "Su ruta llega en 3 minutos y para en la puerta 4."', e:'Explicación', opciones:['Expectativa','Empatía','Experiencia','Explicación'], feedback:'✅ ¡Exacto! Dar información clara y proactiva es aplicar la E de Explicación.'},
+  {situacion:'Un usuario que viene por primera vez y ya sabe cómo moverse gracias a la orientación que recibió.', e:'Expectativa', opciones:['Expectativa','Empatía','Experiencia','Explicación'], feedback:'✅ ¡Bien! Superar la expectativa del usuario (que esperaba estar perdido) genera confianza.'},
+  {situacion:'El usuario se va sonriendo y le dice a su compañero: "Aquí la atención es diferente."', e:'Experiencia', opciones:['Expectativa','Empatía','Experiencia','Explicación'], feedback:'✅ ¡Perfecto! Ese "diferente" es exactamente la Experiencia memorable que queremos crear.'}
+];
+
+const actionCards = [
+  {texto:'Decir "Buenos días" con una sonrisa genuina', esExp:true},
+  {texto:'Validar el pasaje al ingresar', esExp:false},
+  {texto:'Notar el estado de ánimo del usuario y ajustar el tono', esExp:true},
+  {texto:'Llevar el bus de A a B', esExp:false},
+  {texto:'Explicar la demora antes de que el usuario lo pregunte', esExp:true},
+  {texto:'Abrir las puertas en la estación', esExp:false}
+];
+
+window.addEventListener('DOMContentLoaded', () => {
+  buildWordGrid();
+  buildMatchExercise();
+  buildClassifyExercise();
+  setupAuth();
+  document.getElementById('btnNextEx1').addEventListener('click', () => goToStep(1));
+  document.getElementById('btnNextEx2').addEventListener('click', () => goToStep(2));
+  document.getElementById('btnFinish').addEventListener('click', finishActivity);
+});
+
+function buildWordGrid() {
+  const grid = document.getElementById('wordGrid');
+  const shuffled = [...words].sort(() => Math.random()-0.5);
+  shuffled.forEach(w => {
+    const chip = document.createElement('div');
+    chip.className = 'word-chip';
+    chip.textContent = w.texto;
+    chip.addEventListener('click', () => handleWordClick(chip, w.correcto));
+    grid.appendChild(chip);
+  });
+}
+
+function handleWordClick(chip, correcto) {
+  if (chip.classList.contains('correct-sel') || chip.classList.contains('disabled')) return;
+  if (correcto) {
+    chip.classList.add('correct-sel', 'disabled');
+    wordCorrectCount++;
+    document.getElementById('wordsCounter').textContent = `Seleccionadas: ${wordCorrectCount} / 4`;
+    // Show bridge plank
+    const plank = document.getElementById(`plank${wordCorrectCount-1}`);
+    if (plank) plank.classList.add('visible');
+    if (wordCorrectCount === 4) {
+      // Animate user crossing
+      document.getElementById('bridgeUser').style.transform = 'translateX(280px)';
+      setTimeout(() => {
+        const fb = document.getElementById('wordFeedback');
+        fb.textContent = '🎉 ¡Las 4E\'s completas! El puente está construido y el usuario puede cruzar feliz.';
+        fb.style.cssText = 'background:rgba(39,174,96,0.10);color:var(--success);border:1px solid rgba(39,174,96,0.25);';
+        fb.classList.remove('hidden');
+        document.querySelectorAll('.word-chip:not(.correct-sel)').forEach(c => c.classList.add('disabled'));
+        document.getElementById('btnNextEx1').classList.remove('hidden');
+      }, 800);
+    }
+  } else {
+    chip.classList.add('wrong-sel');
+    setTimeout(() => chip.classList.remove('wrong-sel'), 700);
+  }
+}
+
+function buildMatchExercise() {
+  const container = document.getElementById('matchContainer');
+  matchData.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'match-row';
+    div.innerHTML = `
+      <div class="match-scenario">${item.situacion}</div>
+      <div class="match-options" id="mo-${idx}"></div>
+      <div class="match-feedback" id="mf-${idx}"></div>
+    `;
+    container.appendChild(div);
+    const optsEl = div.querySelector(`#mo-${idx}`);
+    item.opciones.forEach(op => {
+      const chip = document.createElement('button');
+      chip.className = 'match-chip';
+      chip.textContent = op;
+      chip.addEventListener('click', () => {
+        if (chip.classList.contains('disabled')) return;
+        const correct = op === item.e;
+        div.querySelectorAll('.match-chip').forEach(c => c.classList.add('disabled'));
+        chip.classList.add(correct ? 'correct' : 'wrong');
+        const fb = div.querySelector(`#mf-${idx}`);
+        fb.textContent = correct ? item.feedback : `❌ No exactamente. La respuesta correcta es "${item.e}".`;
+        fb.className = 'match-feedback ' + (correct ? 'ok' : 'bad');
+        matchAnswered++;
+        if (matchAnswered === matchData.length) document.getElementById('btnNextEx2').classList.remove('hidden');
+      });
+      optsEl.appendChild(chip);
+    });
+  });
+}
+
+function buildClassifyExercise() {
+  const pool = document.getElementById('actionPool');
+  const shuffled = [...actionCards].sort(() => Math.random()-0.5);
+  shuffled.forEach((card, idx) => {
+    const el = document.createElement('div');
+    el.className = 'action-card';
+    el.textContent = card.texto;
+    el.dataset.idx = idx;
+    el.addEventListener('click', () => showClassifyModal(el, card));
+    pool.appendChild(el);
+  });
+}
+
+function showClassifyModal(el, card) {
+  if (el.classList.contains('placed')) return;
+
+  // Simple inline prompt
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:24px;';
+  overlay.innerHTML = `
+    <div style="background:rgba(255,255,255,0.95);border:1px solid rgba(255,255,255,0.9);border-radius:24px;padding:28px;max-width:360px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,30,71,0.15);">
+      <p style="font-size:14px;font-weight:600;color:var(--primary);margin-bottom:20px;line-height:1.5;">"${card.texto}"</p>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:18px;">¿Es un Servicio básico o una Experiencia?</p>
+      <div style="display:flex;gap:12px;">
+        <button id="btnSrv" style="flex:1;padding:14px;border-radius:12px;border:2px solid var(--primary);background:rgba(0,30,71,0.07);color:var(--primary);font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">🔧 Servicio</button>
+        <button id="btnExp" style="flex:1;padding:14px;border-radius:12px;border:2px solid var(--accent-dark);background:rgba(205,212,0,0.1);color:var(--accent-dark);font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">✨ Experiencia</button>
+      </div>
+      <div id="overlayFb" style="margin-top:14px;font-size:12px;display:none;padding:8px 12px;border-radius:8px;"></div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const handleChoice = (isExp) => {
+    const correct = isExp === card.esExp;
+    const fbEl = overlay.querySelector('#overlayFb');
+    if (correct) {
+      fbEl.textContent = '✅ ¡Correcto!';
+      fbEl.style.cssText = 'display:block;background:rgba(39,174,96,0.10);color:var(--success);';
+      el.classList.add('placed');
+      // Add to column
+      const dropped = document.createElement('div');
+      dropped.className = 'classify-dropped';
+      dropped.textContent = card.texto;
+      document.getElementById(isExp ? 'droppedExp' : 'droppedServicio').appendChild(dropped);
+      classifyCount++;
+      if (classifyCount === actionCards.length) document.getElementById('btnFinish').classList.remove('hidden');
+    } else {
+      fbEl.textContent = `❌ No exactamente. Esta acción es una ${card.esExp ? 'Experiencia' : 'acción de Servicio básico'}.`;
+      fbEl.style.cssText = 'display:block;background:rgba(231,76,60,0.08);color:var(--error);';
+    }
+    setTimeout(() => document.body.removeChild(overlay), correct ? 900 : 1800);
+  };
+
+  overlay.querySelector('#btnSrv').addEventListener('click', () => handleChoice(false));
+  overlay.querySelector('#btnExp').addEventListener('click', () => handleChoice(true));
+}
+
+function goToStep(step) {
+  ['ex1','ex2','ex3'].forEach((id,i) => document.getElementById(id).classList.toggle('hidden', i!==step));
+  const pct = Math.round((step/3)*100);
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressLabel').textContent = `Ejercicio ${step+1} de 3`;
+  for (let i=0;i<3;i++){const d=document.getElementById(`dot${i}`);d.className='step-dot';if(i<step)d.classList.add('done');else if(i===step)d.classList.add('active');}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function finishActivity() {
+  const btn = document.getElementById('btnFinish');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Registrando...';
+  try{await registrarNota(10);}catch(e){console.warn(e);}
+  scormComplete(); // Reportar completitud al LMS (SCORM 1.2 — Buk)
+  document.getElementById('ex3').classList.add('hidden');
+  const cs=document.getElementById('completionScreen');
+  cs.classList.remove('hidden');cs.classList.add('show');
+  document.getElementById('progressBar').style.width='100%';
+  document.getElementById('progressPct').textContent='100%';
+  document.getElementById('progressLabel').textContent='¡Completado!';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function registrarNota(nota) {
+  if (!GAS_URL) return;
+  return gasRequest({ action: 'registrar', cedula: colaborador.cedula, actividad: ACTIVIDAD_ID, nota });
+}
+
+function setupAuth() {
+  document.getElementById('btnBuscar').addEventListener('click', buscarColaborador);
+  document.getElementById('cedulaInput').addEventListener('keypress',e=>{if(e.key==='Enter')buscarColaborador();});
+  document.getElementById('btnConfirmar').addEventListener('click',()=>{document.getElementById('authModal').style.display='none';});
+  document.getElementById('btnNoSoyYo').addEventListener('click',()=>{
+    document.getElementById('loginStep').classList.remove('hidden');
+    document.getElementById('confirmStep').classList.add('hidden');
+    document.getElementById('userInfo').style.display='none';
+    document.getElementById('cedulaInput').value='';
+  });
+}
+
+async function buscarColaborador() {
+  const cedula=document.getElementById('cedulaInput').value.trim();
+  if(!cedula||cedula.length<5){showAuthError('Por favor ingresa un número de cédula válido.');return;}
+  setLoadingBtn(true);hideAuthError();
+  try{
+    const data=await gasRequest({action:'buscar',cedula});
+    setLoadingBtn(false);
+    if(data.success){colaborador={cedula,nombre:data.nombre,cargo:data.cargo};showUserInfo(data.nombre,data.cargo);}
+    else showAuthError(data.error||'Cédula no encontrada.');
+  }catch(err){setLoadingBtn(false);showAuthError('Error de conexión.');}
+}
+function showUserInfo(n,c){document.getElementById('userName').textContent=`Hola, ${n} 👋`;document.getElementById('userCargo').textContent=c;document.getElementById('userInfo').style.display='block';document.getElementById('loginStep').classList.add('hidden');document.getElementById('confirmStep').classList.remove('hidden');}
+function setLoadingBtn(l){document.getElementById('btnBuscarText').textContent=l?'Buscando...':'Buscar mi perfil';document.getElementById('btnBuscarSpinner').classList.toggle('hidden',!l);document.getElementById('btnBuscar').disabled=l;}
+function showAuthError(m){const el=document.getElementById('loginError');el.textContent=m;el.style.display='block';}
+function hideAuthError(){document.getElementById('loginError').style.display='none';}
+</script>
+</body>
+</html>
